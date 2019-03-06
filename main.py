@@ -1,3 +1,8 @@
+# TODO
+# "shoot" method for player to actually shoot the gun
+# "destroy" method for zombie to remove them when they're shot
+#  Score system?
+
 import platform
 import pygame
 import random
