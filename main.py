@@ -1,5 +1,4 @@
 # TODO
-#  Limit rate of fire on gun
 #  Add screen to choose difficulty (number of zombies, speed, etc.
 #  Score system?
 #  Limit ammo? Add ammo pickup?
@@ -75,8 +74,6 @@ class Survivor(pygame.sprite.Sprite):
             self.rect.x -= self.speed
         if pressedKey[pygame.K_RIGHT] or pressedKey[pygame.K_d]:
             self.rect.x += self.speed
-        if pressedKey[pygame.K_SPACE]:
-            self.shoot()
         self.rect = fixOutOfBounds(self.rect)
 
     def shoot(self):
@@ -157,7 +154,7 @@ def fixOutOfBounds(rect):
 def main():
     global winFlag
     global loseFlag
-
+    gunLimitFrames = 0
     score = 0
 
     # Create survivor
@@ -195,6 +192,12 @@ def main():
     while True:
         clock.tick(30)
 
+        # Limit the fire rate of the gun to every 10 frames
+        if 0 < gunLimitFrames < 11: # Don't start the timer until the user shoots
+            gunLimitFrames += 1
+        elif gunLimitFrames >= 11:
+            gunLimitFrames = 0
+
         for event in pygame.event.get():
             # Get the list of all keys that are pressed
             pressed = pygame.key.get_pressed()
@@ -203,6 +206,11 @@ def main():
             if event.type == QUIT or pressed[pygame.K_ESCAPE]:
                 pygame.quit()
                 sys.exit()
+
+            # Shoot the gun and start the gunLimitFrames timer
+            if pressed[pygame.K_SPACE] and gunLimitFrames == 0:
+                survivor.shoot()
+                gunLimitFrames += 1
 
             # Keep processing events if not lost or won
             if not loseFlag or winFlag:
