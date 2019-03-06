@@ -1,7 +1,9 @@
 # TODO
-# "shoot" method for player to actually shoot the gun
-# "destroy" method for zombie to remove them when they're shot
+#  Limit rate of fire on gun
+#  Add screen to choose difficulty (number of zombies, speed, etc.
 #  Score system?
+#  Limit ammo? Add ammo pickup?
+#  Different weapon types? Shotgun, grenade, etc?
 
 import platform
 import pygame
@@ -111,7 +113,7 @@ class Zombie(pygame.sprite.Sprite):
 
     # If shot, destroy
     def destroy(self):
-        pass
+        self.kill()
 
 
 # Bullet
@@ -124,7 +126,9 @@ class Bullet(pygame.sprite.Sprite):
 
     def move(self):
         self.rect.x += self.xSpeed
-        # Check if bullet is off the screen; if so, destroy it
+        # Check if bullet is off the screen; if so, destroy it.
+        if self.rect.x > hSize:
+            self.kill()
 
     # Check if bullet collides with another defined sprite
     def isCollidedWith(self, sprite):
@@ -153,6 +157,8 @@ def fixOutOfBounds(rect):
 def main():
     global winFlag
     global loseFlag
+
+    score = 0
 
     # Create survivor
     survivor = Survivor(survivorIMG, 32, 32, 5)
@@ -190,13 +196,13 @@ def main():
         clock.tick(30)
 
         for event in pygame.event.get():
-            # if the event is quit, then exit the game
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-
             # Get the list of all keys that are pressed
             pressed = pygame.key.get_pressed()
+
+            # if the event is quit, then exit the game
+            if event.type == QUIT or pressed[pygame.K_ESCAPE]:
+                pygame.quit()
+                sys.exit()
 
             # Keep processing events if not lost or won
             if not loseFlag or winFlag:
@@ -239,6 +245,7 @@ def main():
             windowSurface.blit(text, [text_x, text_y])
             pygame.display.update()
         else:
+            # Draw the game
             windowSurface.fill(BLACK)
             allSpritesGroup.draw(windowSurface)
             pygame.display.update()
