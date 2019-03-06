@@ -44,6 +44,11 @@ survivorIMG = pygame.image.load('images/survivor.png').convert_alpha()
 zombieIMG = pygame.image.load('images/zombie.png').convert_alpha()
 bulletIMG = pygame.image.load('images/projectile.png').convert_alpha()
 
+# Create sprite groups
+allSpritesGroup = pygame.sprite.Group()
+zombiesGroup = pygame.sprite.Group()
+bulletsGroup = pygame.sprite.Group()
+
 # Flags to determine win/loss
 loseFlag = False
 winFlag = False
@@ -73,7 +78,11 @@ class Survivor(pygame.sprite.Sprite):
         self.rect = fixOutOfBounds(self.rect)
 
     def shoot(self):
-        pass
+        bulletX = self.rect.x
+        bulletY = self.rect.y
+        newBullet = Bullet(bulletX, bulletY)
+        allSpritesGroup.add(newBullet)
+        bulletsGroup.add(newBullet)
 
 
 # Enemy
@@ -107,7 +116,7 @@ class Zombie(pygame.sprite.Sprite):
 
 # Bullet
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, xSpeed, xStart, yStart, imgFile=bulletIMG):
+    def __init__(self, xStart, yStart, xSpeed=20, imgFile=bulletIMG):
         super().__init__()
         self.image = pygame.transform.scale(imgFile, (8, 8))
         self.rect = self.image.get_rect(center=(xStart, yStart))
@@ -144,11 +153,6 @@ def fixOutOfBounds(rect):
 def main():
     global winFlag
     global loseFlag
-
-    # Create sprite groups
-    allSpritesGroup = pygame.sprite.Group()
-    zombiesGroup = pygame.sprite.Group()
-    bulletsGroup = pygame.sprite.Group()
 
     # Create survivor
     survivor = Survivor(survivorIMG, 32, 32, 5)
